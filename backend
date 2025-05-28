@@ -1,0 +1,91 @@
+const { Pool } = require('pg');
+
+const dbConfig = {
+  user: 'dbadmin',               // use your custom DB user
+  host: '127.0.0.1',             // localhost or remote host
+  database: 'docchunker',        // new project-specific DB name
+  password: 'Secure@1234!',      // updated secure password
+  port: 5432,                    // default port
+};
+
+const dbPool = new Pool(dbConfig);
+
+dbPool.connect()
+  .then(() => {
+    console.log('📦 Successfully connected to DocChunker PostgreSQL DB');
+  })
+  .catch((error) => {
+    console.error('❌ Connection to DB failed:', error.message);
+  });
+
+module.exports = dbPool;
+
+
+npm install dotenv
+
+
+# .env
+DB_USER=dbadmin
+DB_PASS=Secure@1234!
+DB_NAME=docchunker
+DB_HOST=127.0.0.1
+DB_PORT=5432
+
+
+// db.js using .env
+require('dotenv').config();
+const { Pool } = require('pg');
+
+const pool = new Pool({
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASS,
+  port: process.env.DB_PORT,
+});
+
+
+
+
+const express = require('express');
+const cors = require('cors');
+const db = require('./db'); // This will trigger the DB connection
+const documentRoutes = require('./routes/documentRoutes');
+
+const app = express();
+const PORT = 3001;
+
+// Custom CORS options
+const corsOptions = {
+  origin: 'http://localhost:3000', // replace with your frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true, // if using cookies or authorization headers
+};
+
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use('/api/documents', documentRoutes);
+
+app.get('/', (req, res) => {
+  res.send('Backend is running!');
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+
+{
+  "name": "chunk-mate-backend",
+  "version": "1.0.0",
+  "description": "Backend server for Chunk-Mate document processing",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "express",
+    "backend",
+
