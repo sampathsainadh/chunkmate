@@ -1,0 +1,30 @@
+-- Table for uploaded documents
+CREATE TABLE IF NOT EXISTS documents (
+    id SERIAL PRIMARY KEY,
+    filename VARCHAR(255) NOT NULL,
+    originalname VARCHAR(255) NOT NULL,
+    upload_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+-- Table for document chunks
+CREATE TABLE IF NOT EXISTS chunks (
+    id SERIAL PRIMARY KEY,
+    document_id INTEGER NOT NULL REFERENCES documents(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    chunk_number INTEGER NOT NULL CHECK (chunk_number > 0),
+    content TEXT NOT NULL,
+    UNIQUE (document_id, chunk_number)  -- Ensure chunk numbers are unique per document
+);
+
+-- Table for hyperlink references
+CREATE TABLE IF NOT EXISTS hyperlinks (
+    id SERIAL PRIMARY KEY,
+    document_id INTEGER NOT NULL REFERENCES documents(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    chunk_id INTEGER NOT NULL REFERENCES chunks(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    url TEXT NOT NULL,
+    label TEXT
+);
+
+-- Indexes for faster lookup
+CREATE INDEX IF NOT EXISTS idx_chunks_document_id ON chunks(document_id);
+CREATE INDEX IF NOT EXISTS idx_hyperlinks_document_id ON hyperlinks(document_id);
+CREATE INDEX IF NOT EXISTS idx_hyperlinks_chunk_id ON hyperlinks(chunk_id);
