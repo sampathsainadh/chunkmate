@@ -1,0 +1,16 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "127.0.0.1",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "DocChunkerDB",
+      "database": "docchunker",
+      "username": "dbadmin",
+      "password": "Secure@1234!",
+      "connectionTimeout": 30
+    }
+  ],
+  "CodeGPT.apiKey": "your-api-key-here"
+}
